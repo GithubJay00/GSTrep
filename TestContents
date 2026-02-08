@@ -1,0 +1,96 @@
+-- made by stopmaldinglilbro  -- fogzza was here to rewrite this shitty skidded code
+
+g = getgenv()
+
+-- Settings --
+g.set = {
+	
+	active = true,
+	
+	range = 3.88,
+	
+	amp = true,  
+	
+}
+
+
+-- Services, variables --
+local RunService = game:GetService("RunService")
+local StarterGui = game:GetService("StarterGui")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+
+StarterGui:SetCore("SendNotification", { Title = "Amp/Reach", Text = "Executed", Duration = 2 })
+
+
+
+--[[ Main Script ]]-- 
+
+g.OnTouched = function(Hit, Handle)
+	local Humanoid = Hit.Parent:FindFirstChildOfClass("Humanoid")
+	
+	if Humanoid and Humanoid.Parent.Name ~= player.Name then
+		
+		firetouchinterest(Hit, Handle, 0)
+		firetouchinterest(Hit, Handle, 1)
+
+		if set.amp then
+			local VictimChar = Hit.Parent
+			
+			for _, child in pairs(VictimChar:GetChildren()) do
+				if child:IsA("BasePart") then
+					firetouchinterest(child, Handle, 0)
+					firetouchinterest(child, Handle, 1)
+				end
+			end
+		end
+	end
+end
+
+g.loop = function()
+	RunService.RenderStepped:Connect(function()
+		if not set.active then return end
+		
+		local Character = player.Character
+		if not Character then return end
+		
+		local tool = Character:FindFirstChildOfClass("Tool")
+		if not tool then return end
+		
+		local Handle = tool:FindFirstChild("Handle") or tool:FindFirstChildOfClass("Part")
+		if not Handle then return end
+
+		local HandlePos = Handle.Position
+		local Forward = Handle.CFrame.LookVector
+
+		for _, Player in pairs(Players:GetPlayers()) do
+			if Player.Name == player.Name then continue end
+			
+			local Pchar = Player.Character
+			local ProotPart = Pchar and Pchar:FindFirstChild("HumanoidRootPart")
+			if not Pchar or not ProotPart then continue end
+			
+			local ToolDistance = ProotPart.Position - HandlePos
+			local dot = Forward:Dot(ToolDistance)
+			
+			local clamp = math.clamp(dot, 0, set.range)
+			local closest = HandlePos + Forward * clamp
+			
+			local Distance = (ProotPart.Position - closest).Magnitude
+			
+			if Distance <= set.range then
+				OnTouched(ProotPart, Handle)
+			end
+		end	
+	end)
+end
+
+player.CharacterAdded:Connect(function(Character)
+	repeat task.wait() until Character and Character:FindFirstChild("HumanoidRootPart")
+	task.wait(0.5)
+	loop()
+end)
+
+loop()
+print("end")
