@@ -7,7 +7,7 @@ g.set = {
 	
 	active = true,
 	
-	range = 10,
+	range = 3.55,
 	
 	amp = false,  
 	
@@ -88,9 +88,8 @@ end
 
 player.CharacterAdded:Connect(function(Character)
 	repeat task.wait() until Character and Character:FindFirstChild("HumanoidRootPart")
-	task.wait(0.5)
+	task.wait(0.35)
 	loop()
 end)
 
 loop()
-print("end")
