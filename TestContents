@@ -7,9 +7,9 @@ g.set = {
 	
 	active = true,
 	
-	range = 4,
+	range = 3.55,
 	
-	amp = false,  
+	amp = true,  
 	
 }
 
