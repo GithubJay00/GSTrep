@@ -51,7 +51,7 @@ StarterGui:SetCore("SendNotification", { Title = "Amp/Reach", Text = "Executed",
 
 --[[ Main Script ]]-- 
 
-g.IsSafe = function(Character)
+--[[g.IsSafe = function(Character)
 	local RootPart = Character and Character:FindFirstChild("HumanoidRootPart")
 	
 	local zone = workspace.Terrain.Spawn:FindFirstChild("SafePlate")
@@ -74,7 +74,7 @@ g.IsSafe = function(Character)
 		return true
 	end
 	return false
-end
+end]]
 
 g.OnTouched = function(Hit, Handle)
 	local Humanoid = Hit.Parent:FindFirstChildOfClass("Humanoid")
