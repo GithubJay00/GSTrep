@@ -123,7 +123,7 @@ g.loop = function()
 			
 			if not Pchar or not ProotPart or not Phumanoid then continue end
 			if Humanoid.Health <= 0 then return elseif Phumanoid.Health <= 0 then continue end
-			if IsSafe(Character) then return elseif IsSafe(Pchar) then continue end
+			--if IsSafe(Character) then return elseif IsSafe(Pchar) then continue end
 			
 			local ToolDistance = ProotPart.Position - HandlePos
 			local dot = Forward:Dot(ToolDistance)
