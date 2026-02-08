@@ -1,13 +1,38 @@
 -- made by stopmaldinglilbro  -- fogzza was here to rewrite this shitty skidded code
 
+-- [[ Bypassing ]] --
+local mt = getrawmetatable(game)
+
+local oldIndex = mt.__index
+local oldNamecall = mt.__namecall
+
+setreadonly(mt, false)
+
+mt.__index = newcclosure(function(arg1, arg2, arg3, arg4, arg5, arg6, arg7)
+	if not checkcaller() and getnamecallmethod() then
+		if tostring(arg1) == "Position" and tostring(arg2) == "Magnitude" then return end
+		if tostring(arg3) == "Handle" and tostring(arg4) == "firetouchinterest" or tostring(arg4) == "TouchInterest" or tostring(arg4) == "RemoteEvent" then return end
+		if tostring(arg5) == "Tool" and tostring(arg6) == "Handle" and tostring(arg7) == "firetouchinterest" or tostring(arg7) == "TouchInterest" or tostring(arg7) == "RemoteEvent" then return end
+	end
+	return oldIndex(arg1, arg2, arg3, arg4, arg5, arg6, arg7)
+end)
+
+for _, v in next, getconnections(game:GetService("LogService").MessageOut) do v:Disable() end
+for _, v in next, getconnections(game:GetService("ScriptContext").Error) do v:Disable() end
+game:GetService("ScriptContext"):SetTimeout(0.1)
+
+setreadonly(mt, true)
+------------------------------------------------------------------------------------------------------------------ Recoded method (not the best)
+
 g = getgenv()
+
 
 -- Settings --
 g.set = {
 	
 	active = true,
 	
-	range = 3.55,
+	range = 3.88,
 	
 	amp = true,  
 	
@@ -24,8 +49,32 @@ local player = Players.LocalPlayer
 StarterGui:SetCore("SendNotification", { Title = "Amp/Reach", Text = "Executed", Duration = 2 })
 
 
-
 --[[ Main Script ]]-- 
+
+g.IsSafe = function(Character)
+	local RootPart = Character and Character:FindFirstChild("HumanoidRootPart")
+	
+	local zone = workspace.Terrain.Spawn:FindFirstChild("SafePlate")
+	if not zone then return false end
+
+	local ZonePos, ZoneSize = zone.Position, zone.Size
+	local area = Vector3.new(ZoneSize.X, 0, ZoneSize.Z) / 2
+
+	-- Bounds --
+	local XZ = {
+		minX = ZonePos.X - area.X,
+		maxX = ZonePos.X + area.X,
+		minZ = ZonePos.Z - area.Z,
+		maxZ = ZonePos.Z + area.Z
+	}
+	
+	-- safezone check (stfo:btb) -- 
+	local Pos = RootPart.Position
+	if Pos.X >= XZ.minX and Pos.X <= XZ.maxX and Pos.Z >= XZ.minZ and Pos.Z <= XZ.maxZ then
+		return true
+	end
+	return false
+end
 
 g.OnTouched = function(Hit, Handle)
 	local Humanoid = Hit.Parent:FindFirstChildOfClass("Humanoid")
@@ -53,7 +102,8 @@ g.loop = function()
 		if not set.active then return end
 		
 		local Character = player.Character
-		if not Character then return end
+		local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
+		if not Character or not Humanoid then return end
 		
 		local tool = Character:FindFirstChildOfClass("Tool")
 		if not tool then return end
@@ -69,7 +119,11 @@ g.loop = function()
 			
 			local Pchar = Player.Character
 			local ProotPart = Pchar and Pchar:FindFirstChild("HumanoidRootPart")
-			if not Pchar or not ProotPart then continue end
+			local Phumanoid = Pchar and Pchar:FindFirstChildOfClass("Humanoid")
+			
+			if not Pchar or not ProotPart or not Phumanoid then continue end
+			if Humanoid.Health <= 0 then return elseif Phumanoid.Health <= 0 then continue end
+			if IsSafe(Character) then return elseif IsSafe(Pchar) then continue end
 			
 			local ToolDistance = ProotPart.Position - HandlePos
 			local dot = Forward:Dot(ToolDistance)
@@ -81,6 +135,7 @@ g.loop = function()
 			
 			if Distance <= set.range then
 				OnTouched(ProotPart, Handle)
+				tool:Activate()
 			end
 		end	
 	end)
@@ -88,8 +143,9 @@ end
 
 player.CharacterAdded:Connect(function(Character)
 	repeat task.wait() until Character and Character:FindFirstChild("HumanoidRootPart")
-	task.wait(0.35)
+	task.wait(0.5)
 	loop()
 end)
 
 loop()
+print("script completed end")
