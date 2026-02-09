@@ -27,12 +27,14 @@ setreadonly(mt, true)]]
 g = getgenv()
 
 
--- Settings --
+-- Settings -- this took some time to get the perfect settings and even then the settings aren't perfect. Adjust it if you need
 g.set = {
 	
 	active = true,
 	
-	lungeTime = 8, 
+	AimAssistStrength = 5, -- gives you aim assist for your sword attacks
+	
+	lungeTime = 8, -- when to auto lunge and aim
 	
 	range = 3.90,
 	
@@ -177,7 +179,7 @@ g.loop = function()
 				if ClosestPoint then
 					local camera = workspace.CurrentCamera
 					local targetCFrame = CFrame.new(camera.CFrame.Position, ClosestPoint)
-					camera.CFrame = camera.CFrame:Lerp(targetCFrame, 0.35)
+					camera.CFrame = camera.CFrame:Lerp(targetCFrame, set.AimAssistStrength)
 					tool:Activate()
 				end
 			end
