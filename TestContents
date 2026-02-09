@@ -176,7 +176,7 @@ g.loop = function()
 				if ClosestPoint then
 					local camera = workspace.CurrentCamera
 					local targetCFrame = CFrame.new(camera.CFrame.Position, ClosestPoint)
-					TweenService:Create(camera, TweenInfo.new(5), {CFrame = targetCFrame}):Play()
+					TweenService:Create(camera, TweenInfo.new(0.5), {CFrame = targetCFrame}):Play()
 					tool:Activate()
 				end
 			end
