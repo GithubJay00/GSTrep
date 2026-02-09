@@ -82,15 +82,24 @@ g.IsSafe = function(Character)
 end
 
 g.getClosestPointOnTarget = function(targetCharacter, fromPosition)
-	
 	local closestLimb = nil
 	local closestPoint = nil
 	local closestDistance = math.huge
 
-	for _, part in pairs(targetCharacter:GetChildren()) do
+	for _, part in pairs(targetCharacter:GetDescendants()) do
 		if part:IsA("BasePart") then
 
-			local closestOnPart = part:GetClosestPointOnBounds(fromPosition)
+			local partCFrame, partSize = part.CFrame, part.Size
+			local localPos = partCFrame:PointToObjectSpace(fromPosition)
+
+			local halfSize = partSize / 2
+			local closestLocalPos = Vector3.new(
+				math.max(-halfSize.X, math.min(halfSize.X, localPos.X)),
+				math.max(-halfSize.Y, math.min(halfSize.Y, localPos.Y)),
+				math.max(-halfSize.Z, math.min(halfSize.Z, localPos.Z))
+			)
+
+			local closestOnPart = partCFrame:PointToWorldSpace(closestLocalPos)
 			local distance = (closestOnPart - fromPosition).Magnitude
 
 			if distance < closestDistance then
