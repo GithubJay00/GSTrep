@@ -32,11 +32,11 @@ g.set = {
 	
 	active = true,
 	
-	lungeTime = 8, 
+	lungeTime = 5, 
 	
-	range = 3.80,
+	range = 3.50,
 	
-	amp = true  
+	amp = false  
 	
 }
 
@@ -47,7 +47,6 @@ local RunService = game:GetService("RunService")
 local StarterGui = game:GetService("StarterGui")
 local Players = game:GetService("Players")
 
-local camera = workspace.CurrentCamera
 local player = Players.LocalPlayer
 
 StarterGui:SetCore("SendNotification", { Title = "Amp/Reach", Text = "Executed", Duration = 2 })
@@ -175,8 +174,9 @@ g.loop = function()
 				local ClosestLimb, ClosestPoint, limbDistance = getClosestPointOnTarget(Pchar, HandlePos) 
 				
 				if ClosestPoint then
+					local camera = workspace.CurrentCamera
 					local targetCFrame = CFrame.new(camera.CFrame.Position, ClosestPoint)
-					camera.CFrame = camera.CFrame:Lerp(targetCFrame, 0.3)
+					TweenService:Create(camera, TweenInfo.new(2), {CFrame = targetCFrame}):Play()
 					tool:Activate()
 				end
 			end
