@@ -32,7 +32,7 @@ g.set = {
 	
 	active = true,
 	
-	AimAssistStrength = 5, -- gives you aim assist for your sword attacks
+	AimAssistStrength = 0.5, -- gives you aim assist for your sword attacks
 	
 	lungeTime = 8, -- when to auto lunge and aim
 	
