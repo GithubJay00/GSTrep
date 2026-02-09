@@ -26,19 +26,18 @@ setreadonly(mt, true)]]
 
 g = getgenv()
 
-
 -- Settings -- this took some time to get the perfect settings and even then the settings aren't perfect. Adjust it if you need
 g.set = {
 	
 	active = true,
 	
-	AimAssistStrength = 0.5, -- gives you aim assist for your sword attacks
+	AimAssistStrength = 0.3, -- gives you aim assist for your sword attacks
 	
-	lungeTime = 8, -- when to auto lunge and aim
+	lungeTime = 7, -- when to auto lunge and aim
 	
-	range = 3.90,
+	range = 3.50,
 	
-	amp = false  
+	amp = true  
 	
 }
 
@@ -194,4 +193,3 @@ player.CharacterAdded:Connect(function(Character)
 end)
 
 loop()
-print("script completed no errors yay")
