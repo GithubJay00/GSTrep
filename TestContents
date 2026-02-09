@@ -32,7 +32,7 @@ g.set = {
 	
 	active = true,
 	
-	lungeTime = 5, 
+	lungeTime = 8, 
 	
 	range = 3.90,
 	
@@ -177,7 +177,7 @@ g.loop = function()
 				if ClosestPoint then
 					local camera = workspace.CurrentCamera
 					local targetCFrame = CFrame.new(camera.CFrame.Position, ClosestPoint)
-					camera.CFrame = camera.CFrame:Lerp(targetCFrame, 0.15)
+					camera.CFrame = camera.CFrame:Lerp(targetCFrame, 0.35)
 					tool:Activate()
 				end
 			end
