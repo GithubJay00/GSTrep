@@ -167,6 +167,7 @@ g.loop = function()
 				if ClosestPoint then
 					local targetCFrame = CFrame.new(camera.CFrame.Position, ClosestPoint)
 					camera.CFrame = camera.CFrame:Lerp(targetCFrame, 0.1)
+					tool:Activate()
 				end
 			end
 		end	
