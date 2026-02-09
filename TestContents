@@ -34,7 +34,7 @@ g.set = {
 	
 	lungeTime = 5, 
 	
-	range = 3.50,
+	range = 3.80,
 	
 	amp = false  
 	
