@@ -32,9 +32,9 @@ g.set = {
 	
 	active = true,
 	
-	lungeTime = 8, 
+	lungeTime = 5, 
 	
-	range = 3.80,
+	range = 3.90,
 	
 	amp = false  
 	
@@ -42,7 +42,6 @@ g.set = {
 
 
 -- Services, variables --
-local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local StarterGui = game:GetService("StarterGui")
 local Players = game:GetService("Players")
@@ -176,7 +175,7 @@ g.loop = function()
 				if ClosestPoint then
 					local camera = workspace.CurrentCamera
 					local targetCFrame = CFrame.new(camera.CFrame.Position, ClosestPoint)
-					TweenService:Create(camera, TweenInfo.new(0.05), {CFrame = targetCFrame}):Play()
+					camera.CFrame = camera.CFrame:Lerp(targetCFrame, 1)
 					tool:Activate()
 				end
 			end
