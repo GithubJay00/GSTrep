@@ -56,9 +56,10 @@ StarterGui:SetCore("SendNotification", { Title = "Amp/Reach", Text = "Executed",
 --[[ Main Script ]]-- 
 
 g.IsSafe = function(Character)
-	local RootPart = Character and Character:FindFirstChild("HumanoidRootPart")
-	if not workspace.Terrain.Spawn:FindFirstChild("SafePlate") or workspace.Terrain.Spawn == nil then return false end
+	local IDS = { 13594360346, 11515893037, 6356763358, 6361937392 }
+	if game.PlaceId ~= IDS[1] or game.PlaceId ~= IDS[2] or game.PlaceId ~= IDS[3] or game.PlaceId ~= IDS[4] then return false end
 	
+	local RootPart = Character and Character:FindFirstChild("HumanoidRootPart")
 	local zone = workspace.Terrain.Spawn:FindFirstChild("SafePlate")
 
 	local ZonePos, ZoneSize = zone.Position, zone.Size
