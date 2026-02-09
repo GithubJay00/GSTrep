@@ -32,18 +32,22 @@ g.set = {
 	
 	active = true,
 	
-	range = 3.88,
+	lungeTime = 5, 
 	
-	amp = true,  
+	range = 3.80,
+	
+	amp = true  
 	
 }
 
 
 -- Services, variables --
+local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local StarterGui = game:GetService("StarterGui")
 local Players = game:GetService("Players")
 
+local camera = workspace.CurrentCamera
 local player = Players.LocalPlayer
 
 StarterGui:SetCore("SendNotification", { Title = "Amp/Reach", Text = "Executed", Duration = 2 })
@@ -51,11 +55,11 @@ StarterGui:SetCore("SendNotification", { Title = "Amp/Reach", Text = "Executed",
 
 --[[ Main Script ]]-- 
 
---[[g.IsSafe = function(Character)
+g.IsSafe = function(Character)
 	local RootPart = Character and Character:FindFirstChild("HumanoidRootPart")
+	if not workspace.Terrain.Spawn:FindFirstChild("SafePlate") or workspace.Terrain.Spawn == nil then return false end
 	
 	local zone = workspace.Terrain.Spawn:FindFirstChild("SafePlate")
-	if not zone then return false end
 
 	local ZonePos, ZoneSize = zone.Position, zone.Size
 	local area = Vector3.new(ZoneSize.X, 0, ZoneSize.Z) / 2
@@ -74,7 +78,29 @@ StarterGui:SetCore("SendNotification", { Title = "Amp/Reach", Text = "Executed",
 		return true
 	end
 	return false
-end]]
+end
+
+g.getClosestPointOnTarget = function(targetCharacter, fromPosition)
+	
+	local closestLimb = nil
+	local closestPoint = nil
+	local closestDistance = math.huge
+
+	for _, part in pairs(targetCharacter:GetChildren()) do
+		if part:IsA("BasePart") then
+
+			local closestOnPart = part:GetClosestPointOnBounds(fromPosition)
+			local distance = (closestOnPart - fromPosition).Magnitude
+
+			if distance < closestDistance then
+				closestDistance = distance
+				closestLimb = part
+				closestPoint = closestOnPart
+			end
+		end
+	end
+	return closestLimb, closestPoint, closestDistance
+end
 
 g.OnTouched = function(Hit, Handle)
 	local Humanoid = Hit.Parent:FindFirstChildOfClass("Humanoid")
@@ -123,7 +149,7 @@ g.loop = function()
 			
 			if not Pchar or not ProotPart or not Phumanoid then continue end
 			if Humanoid.Health <= 0 then return elseif Phumanoid.Health <= 0 then continue end
-			--if IsSafe(Character) then return elseif IsSafe(Pchar) then continue end
+			if IsSafe(Character) then return elseif IsSafe(Pchar) then continue end
 			
 			local ToolDistance = ProotPart.Position - HandlePos
 			local dot = Forward:Dot(ToolDistance)
@@ -135,7 +161,13 @@ g.loop = function()
 			
 			if Distance <= set.range then
 				OnTouched(ProotPart, Handle)
-				tool:Activate()
+			elseif Distance <= set.lungeTime then
+				local ClosestLimb, ClosestPoint, limbDistance = getClosestPointOnTarget(Pchar, HandlePos) 
+				
+				if ClosestPoint then
+					local targetCFrame = CFrame.new(camera.CFrame.Position, ClosestPoint)
+					camera.CFrame = camera.CFrame:Lerp(targetCFrame, 0.1)
+				end
 			end
 		end	
 	end)
@@ -148,4 +180,4 @@ player.CharacterAdded:Connect(function(Character)
 end)
 
 loop()
-print("script completed end")
+print("script completed no errors yay")
