@@ -169,13 +169,15 @@ g.loop = function()
 			
 			if Distance <= set.range then
 				OnTouched(ProotPart, Handle)
-			elseif Distance <= set.lungeTime then
+			end 
+			
+			if Distance <= set.lungeTime then
 				local ClosestLimb, ClosestPoint, limbDistance = getClosestPointOnTarget(Pchar, HandlePos) 
 				
 				if ClosestPoint then
 					local camera = workspace.CurrentCamera
 					local targetCFrame = CFrame.new(camera.CFrame.Position, ClosestPoint)
-					camera.CFrame = camera.CFrame:Lerp(targetCFrame, 1)
+					camera.CFrame = camera.CFrame:Lerp(targetCFrame, 0.15)
 					tool:Activate()
 				end
 			end
