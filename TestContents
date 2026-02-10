@@ -33,7 +33,7 @@ g.set = {
 	
 	reach = {
 		
-		enabled = true,
+		toggled = true,
 
 		range = 3.80,
 
@@ -42,16 +42,16 @@ g.set = {
 	
 	aim = {
 		
-		AimAssist = true, -- assists you in aiming your sword (incase ur aim is dogshit)
+		toggled = true, -- assists you in aiming your sword (incase ur aim is dogshit)
 
-		AimAssistStrength = 0.2, -- gives you aim assist for your sword attacks	
+		AimAssistStrength = 0.25, -- gives you aim assist for your sword attacks	
 	},
 	
 	lunge = {
 		
 		autoLunge = true, -- auto lunges for you 
 
-		lungeTime = 7 -- when to auto lunge and aim (distance)	
+		lungeRange = 7 -- when to auto lunge and aim (distance)	
 	}
 }
 
@@ -157,7 +157,7 @@ end
 
 g.loop = function()
 	RunService.RenderStepped:Connect(function()
-		if not set.reach.enabled then return end
+		if not set.reach.toggled then return end
 		
 		local Character = player.Character
 		local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
@@ -195,12 +195,12 @@ g.loop = function()
 				OnTouched(ProotPart, Handle)
 			end 
 			
-			if Distance <= set.lunge.lungeTime then
+			if Distance <= set.lunge.lungeRange then
 				if IsTeamMate(Player) then continue end
 				
 				local ClosestLimb, ClosestPoint, limbDistance = getClosestPointOnTarget(Pchar, HandlePos) 
 				
-				if ClosestPoint and set.aim.AimAssist then
+				if ClosestPoint and set.aim.toggled then
 					workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame:Lerp(CFrame.new(workspace.CurrentCamera.CFrame.Position, ClosestPoint), set.aim.AimAssistStrength)
 				end
 				
