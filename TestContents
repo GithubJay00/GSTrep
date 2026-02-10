@@ -37,14 +37,14 @@ g.set = {
 
 		range = 3.80,
 
-		amp = true	
+		amp = false	
 	},
 	
 	aim = {
 		
 		toggled = true, -- assists you in aiming your sword (incase ur aim is dogshit)
 
-		AimAssistStrength = 0.25, -- gives you aim assist for your sword attacks	
+		AimAssistStrength = 0.1, -- gives you aim assist for your sword attacks	
 	},
 	
 	lunge = {
