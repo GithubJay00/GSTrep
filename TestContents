@@ -1,4 +1,4 @@
--- made by stopmaldinglilbro  -- fogzza was here to rewrite this shitty skidded code
+-- made by stopmaldinglilbro  -- fogzza was here to rewrite this code
 
 -- [[ Bypassing ]] --
 --[[local mt = getrawmetatable(game)
@@ -26,20 +26,36 @@ setreadonly(mt, true)]]
 
 g = getgenv()
 
--- Settings -- this took some time to get the perfect settings and even then the settings aren't perfect. Adjust it if you need
+
+--[[ Settings ]]-- 
+
 g.set = {
 	
-	active = true,
+	reach = {
+		
+		enabled = true,
+
+		range = 3.80,
+
+		amp = true	
+	},
 	
-	AimAssistStrength = 0.3, -- gives you aim assist for your sword attacks
+	aim = {
+		
+		AimAssist = true, -- assists you in aiming your sword (incase ur aim is dogshit)
+
+		AimAssistStrength = 0.2, -- gives you aim assist for your sword attacks	
+	},
 	
-	lungeTime = 7, -- when to auto lunge and aim
-	
-	range = 3.50,
-	
-	amp = true  
-	
+	lunge = {
+		
+		autoLunge = true, -- auto lunges for you 
+
+		lungeTime = 7 -- when to auto lunge and aim (distance)	
+	}
 }
+
+--------------------
 
 
 -- Services, variables --
@@ -75,6 +91,13 @@ g.IsSafe = function(Character)
 	-- safezone check (stfo:btb) -- 
 	local Pos = RootPart.Position
 	if Pos.X >= XZ.minX and Pos.X <= XZ.maxX and Pos.Z >= XZ.minZ and Pos.Z <= XZ.maxZ then
+		return true
+	end
+	return false
+end
+
+g.IsTeamMate = function(Player)
+	if Player.Team == player.Team then
 		return true
 	end
 	return false
@@ -119,7 +142,7 @@ g.OnTouched = function(Hit, Handle)
 		firetouchinterest(Hit, Handle, 0)
 		firetouchinterest(Hit, Handle, 1)
 
-		if set.amp then
+		if set.reach.amp then
 			local VictimChar = Hit.Parent
 			
 			for _, child in pairs(VictimChar:GetChildren()) do
@@ -134,7 +157,7 @@ end
 
 g.loop = function()
 	RunService.RenderStepped:Connect(function()
-		if not set.active then return end
+		if not set.reach.enabled then return end
 		
 		local Character = player.Character
 		local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
@@ -160,26 +183,29 @@ g.loop = function()
 			if Humanoid.Health <= 0 then return elseif Phumanoid.Health <= 0 then continue end
 			if IsSafe(Character) then return elseif IsSafe(Pchar) then continue end
 			
-			local ToolDistance = ProotPart.Position - HandlePos
+			local ToolDistance = (ProotPart.Position - HandlePos).Unit
 			local dot = Forward:Dot(ToolDistance)
 			
-			local clamp = math.clamp(dot, 0, set.range)
+			local clamp = math.clamp(dot, 0, set.reach.range)
 			local closest = HandlePos + Forward * clamp
 			
 			local Distance = (ProotPart.Position - closest).Magnitude
 			
-			if Distance <= set.range then
+			if Distance <= set.reach.range then
 				OnTouched(ProotPart, Handle)
 			end 
 			
-			if Distance <= set.lungeTime then
+			if Distance <= set.lunge.lungeTime then
+				if IsTeamMate(Player) then continue end
+				
 				local ClosestLimb, ClosestPoint, limbDistance = getClosestPointOnTarget(Pchar, HandlePos) 
 				
-				if ClosestPoint then
-					local camera = workspace.CurrentCamera
-					local targetCFrame = CFrame.new(camera.CFrame.Position, ClosestPoint)
-					camera.CFrame = camera.CFrame:Lerp(targetCFrame, set.AimAssistStrength)
-					tool:Activate()
+				if ClosestPoint and set.aim.AimAssist then
+					workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame:Lerp(CFrame.new(workspace.CurrentCamera.CFrame.Position, ClosestPoint), set.aim.AimAssistStrength)
+				end
+				
+				if set.lunge.autoLunge then 
+					tool:Activate() 
 				end
 			end
 		end	
