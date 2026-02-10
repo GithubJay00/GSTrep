@@ -97,7 +97,7 @@ g.IsSafe = function(Character)
 end
 
 g.IsTeamMate = function(Player)
-	if Player.Team == player.Team then
+	if Player.Team and player.Team and Player.Team == player.Team then
 		return true
 	end
 	return false
