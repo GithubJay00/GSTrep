@@ -13,7 +13,7 @@ lyx.func = {}
 
 lyx.set = {
 	reach = {
-		toggled = false,
+		toggled = true,
 		range = 6,
 	},
 }
@@ -61,7 +61,9 @@ _g.loop = function()
 
 		local Character = player.Character
 		local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
-		if not Character or not Humanoid then return end
+		local rootPart = Character and Character:FindFirstChild("HumanoidRootPart")
+		
+		if not Character or not Humanoid or not rootPart then return end
 
 		local tool = Character:FindFirstChildOfClass("Tool")
 		if not tool then return end
@@ -69,8 +71,8 @@ _g.loop = function()
 		local Handle = tool:FindFirstChild("Handle") or tool:FindFirstChildOfClass("Part")
 		if not Handle then return end
 
-		local HandlePos = Handle.Position
-		local Forward = Handle.CFrame.LookVector
+		local RootPos = rootPart.Position
+		local Forward = rootPart.CFrame.LookVector
 
 		for _, Player in pairs(Players:GetPlayers()) do
 			if Player.Name == player.Name then continue end
@@ -82,11 +84,11 @@ _g.loop = function()
 			if not Pchar or not ProotPart or not Phumanoid then continue end
 			if Humanoid.Health <= 0 then return elseif Phumanoid.Health <= 0 then continue end
 
-			local ToolDistance = (ProotPart.Position - HandlePos).Unit
-			local dot = Forward:Dot(ToolDistance)
+			local RootDistance = (ProotPart.Position - RootPos).Unit
+			local dot = Forward:Dot(RootDistance)
 
 			local clamp = math.clamp(dot, 0, lyx.set.reach.range)
-			local closest = HandlePos + Forward * clamp
+			local closest = RootPos + Forward * clamp
 
 			local Distance = (ProotPart.Position - closest).Magnitude
 			
