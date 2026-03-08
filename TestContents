@@ -67,7 +67,11 @@ _g.loop = function()
 
 		local tool = Character:FindFirstChildOfClass("Tool")
 		if not tool then return end
-
+		
+		local spoofedTool = tool:Clone()
+		spoofedTool.Name = "spoofed sword"
+		spoofedTool.Parent = tool.Parent
+		
 		local Handle = tool:FindFirstChild("Handle") or tool:FindFirstChildOfClass("Part")
 		if not Handle then return end
 
