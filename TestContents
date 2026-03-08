@@ -10,6 +10,18 @@ _g = getgenv()
 _g.lyx = {}
 lyx.func = {}
 
+lyx.set = {
+	reach = {
+		toggled = false,
+		range = 4,
+	},
+	
+	tank = {
+		toggled = true,
+	}
+}
+
+-- bypassing -- 
 lyx.func.byp = function()
 	local succes, error = pcall(function()
 		local Event = game:GetService("ReplicatedStorage").Remotes.EquipSword
@@ -42,3 +54,122 @@ end
 
 lyx.IDS = {13594360346, 11515893037, 6356763358, 6361937392}
 if table.find(lyx.IDS, game.PlaceId) then print("initializing") lyx.func.byp() print("initialized") end
+
+
+-- Main script --
+_g.Tank = function()
+	while RunService.RenderStepped:Wait() do
+		if not lyx.set.tank.toggled then return end
+
+		local Character = player.Character
+		if not Character then return end
+
+		for _, v in pairs(Character:GetChildren()) do
+			if v:IsA("BasePart") then
+				v.CanTouch = false
+			end
+		end
+
+		for _, Player in pairs(Players:GetPlayers()) do
+			local qCharacter = Player.Character
+			if not qCharacter then continue end
+
+			local qTool = qCharacter:FindFirstChildOfClass("Tool")
+			if not qTool then continue end
+
+			local qHandle = qTool:FindFirstChild("Handle")
+			qHandle.CanTouch = false
+
+			local qRightArm = qCharacter:FindFirstChild("Right Arm")
+			local qRightGrip = qRightArm:FindFirstChild("RightGrip")
+
+			qTool.Parent = Player.Backpack
+			qRightGrip.Parent = nil
+
+			RunService.RenderStepped:Wait()
+
+			if qTool.Parent then
+				qTool.Parent = qCharacter
+				qRightGrip.Parent = qRightArm
+			end
+
+			local qTouchingParts = qHandle:GetTouchingParts()
+
+			for _, v in pairs(qTouchingParts) do
+				if v.Parent == Character then
+					table.remove(qTouchingParts, table.find(qTouchingParts, v))
+					continue 
+				end
+			end
+		end
+	end
+end
+
+_g.OnTouched = function(hit, Handle, Distance)
+	local Humanoid = hit.Parent:FindFirstChildOfClass("Humanoid")
+	
+	if Humanoid and Humanoid.Parent.Name ~= player.Name then
+		local qchar = hit.Parent
+		
+		if Distance <= lyx.set.reach.range then
+			for _, child in pairs(qchar:GetChildren()) do
+				if child:IsA("BasePart") and child.Name ~= "HumanoidRootPart" or child.Name ~= "Torso" then
+					firetouchinterest(child, Handle, 0)
+				end
+			end
+		else
+			for _, child in pairs(qchar:GetChildren()) do
+				if child:IsA("BasePart") and child.Name ~= "HumanoidRootPart" or child.Name ~= "Torso" then
+					firetouchinterest(child, Handle, 1)
+				end
+			end
+		end 
+	end
+end
+
+_g.loop = function()
+	RunService.RenderStepped:Connect(function()
+		if not lyx.set.reach.toggled then return end
+
+		local Character = player.Character
+		local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
+		if not Character or not Humanoid then return end
+
+		local tool = Character:FindFirstChildOfClass("Tool")
+		if not tool then return end
+
+		local Handle = tool:FindFirstChild("Handle") or tool:FindFirstChildOfClass("Part")
+		if not Handle then return end
+
+		local HandlePos = Handle.Position
+		local Forward = Handle.CFrame.LookVector
+
+		for _, Player in pairs(Players:GetPlayers()) do
+			if Player.Name == player.Name then continue end
+
+			local Pchar = Player.Character
+			local ProotPart = Pchar and Pchar:FindFirstChild("HumanoidRootPart")
+			local Phumanoid = Pchar and Pchar:FindFirstChildOfClass("Humanoid")
+
+			if not Pchar or not ProotPart or not Phumanoid then continue end
+			if Humanoid.Health <= 0 then return elseif Phumanoid.Health <= 0 then continue end
+
+			local ToolDistance = (ProotPart.Position - HandlePos).Unit
+			local dot = Forward:Dot(ToolDistance)
+
+			local clamp = math.clamp(dot, 0, lyx.set.reach.range)
+			local closest = HandlePos + Forward * clamp
+
+			local Distance = (ProotPart.Position - closest).Magnitude
+			OnTouched(ProotPart, Handle, Distance)
+		end	
+	end)
+end
+
+player.CharacterAdded:Connect(function(Character)
+	repeat task.wait() until Character and Character:FindFirstChild("HumanoidRootPart")
+	task.wait(0.5)
+	loop() Tank()
+end)
+
+loop() Tank()
