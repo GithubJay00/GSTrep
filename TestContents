@@ -82,6 +82,7 @@ _g.Tank = function()
 
 			local qRightArm = qCharacter:FindFirstChild("Right Arm")
 			local qRightGrip = qRightArm:FindFirstChild("RightGrip")
+			if not qRightArm or not qRightGrip then continue end
 
 			qTool.Parent = Player.Backpack
 			qRightGrip.Parent = nil
