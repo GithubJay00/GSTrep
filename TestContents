@@ -13,8 +13,8 @@ lyx.func = {}
 
 lyx.set = {
 	reach = {
-		toggled = false,
-		range = 4,
+		toggled = true,
+		range = 5.5,
 	},
 	
 	tank = {
